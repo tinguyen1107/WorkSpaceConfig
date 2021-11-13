@@ -15,6 +15,7 @@ set smarttab
 set cmdheight=3
 set showmatch
 set smartcase
+
 set noswapfile
 set incsearch
 set encoding=utf-8
@@ -26,6 +27,9 @@ set nowritebackup
 
 set background=dark
 set termguicolors
+
+set splitright
+set splitbelow
 
 
 " ------ PLUGIN ------ "
@@ -60,9 +64,12 @@ call plug#begin ('~/.vim/plugged')
 
     Plug 'christoomey/vim-tmux-navigator'
 
+    Plug 'sheerun/vim-polyglot'
+    Plug 'Chiel92/vim-autoformat'
 call plug#end()
 
 colorscheme gruvbox
+
 
 " ------ Map ------ "
 " Insert Mode
@@ -70,11 +77,17 @@ inoremap jj <ESC>
 inoremap <C-z> <C-o>:u <CR>
 
 " Normal Mode
-nnoremap <C-z> :u <CR>
 nnoremap <silent> <C-k> <c-w>k<CR>
 nnoremap <silent> <C-j> <c-w>j<CR>
 nnoremap <silent> <C-h> <c-w>h<CR>
 nnoremap <silent> <C-l> <c-w>l<CR>
+
+" move line or visually selected block - option+j/k
+inoremap ∆ <Esc>:m .+1<CR>==gi
+inoremap ˚ <Esc>:m .-2<CR>==gi
+vnoremap ∆ :m '>+1<CR>gv=gv
+vnoremap ˚ :m '<-2<CR>gv=gv
+
 
 " ------ Compile C++ ------ "
 nnoremap <f8> <esc>:!g++ -std=c++14 -o %:r %:t<enter>
@@ -86,10 +99,10 @@ let NERDTreeMinimalUI = 1
 let NERDTreeDirArrows = 1
 " autocmd VimEnter * NERDTree | wincmd p
 
-nnoremap <leader>n :NERDTreeFocus<CR>
+"nnoremap <leader>n :NERDTreeFocus<CR>
 nnoremap <C-n> :NERDTree<CR>
-nnoremap <C-o> :NERDTreeToggle<CR>
-nnoremap <C-s> :NERDTreeFind<CR>
+nnoremap <C-t> :NERDTreeToggle<CR>
+"nnoremap <C-s> :NERDTreeFind<CR>
 
 
 " ------ Setup NERDTree Commenter ------ "
@@ -125,6 +138,7 @@ nnoremap <silent> <C-f> :Files<CR>
 nnoremap <silent> <leader>f :Rg<CR>
 "command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
+
 " ------ coc.vim ------ "
 inoremap <silent><expr> <TAB>
       \ pumvisible() ? "\<C-n>" :
@@ -144,7 +158,7 @@ if get(g:, 'AutoPairsFlyMode', 0) == 0
       let afterStr = strpart(getline('.'), col('.')-1)
       if afterStr =~ '^\s*'.a:char
         return a:char
-     elseif afterStr =~ '^\s*$'
+      elseif afterStr =~ '^\s*$'
         let nextLineNum = getpos('.')[1] + 1
         let nextLine = getline(nextLineNum)
         while nextLineNum <= line('$') && nextLine =~ '^\s*$'
@@ -228,3 +242,6 @@ nnoremap <silent> <space>s :<C-u>CocList -I symbols<cr>
 nmap <leader>do <Plug>(coc-codeaction)
 
 nmap <leader>rn <Plug>(coc-rename)
+
+let g:formatterpath = ['/some/path/to/a/folder', '/home/superman/formatters']
+noremap <F3> :Autoformat<CR>
